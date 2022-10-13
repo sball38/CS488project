@@ -22,14 +22,21 @@ pd.set_option('display.max_colwidth', None)
 
 ###############   Mean values
 
-# mean values for all entries based on 'school'
+# mean values for all entries int Maths based on 'school'
 print('Mean values according to school:')
 print(Maths.groupby('school').mean())
 print()
 
-# mean values for all entries based on 'sex'
+# mean values for all entries in Maths based on 'sex'
 print('Mean values according to sex:')
 print(Maths.groupby('sex').mean())
 print()
 
-#
+# mean values for all entries in Maths based on 'absences'
+print('Mean values according to absences')
+print(Maths.groupby('absences').mean())
+print()
+
+# mean values for all entries in Maths based on 'failures'
+print(Maths.groupby('failures').mean())
+print()
