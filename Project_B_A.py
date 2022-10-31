@@ -126,6 +126,8 @@ plt.show()
 
 ############################# Classification Section
 
+############################# K Nearest Neighbor
+
 # create training and testing data
 # this will be commented out after the test and 
 # training data is produced
@@ -177,3 +179,27 @@ plt.title('KNN-Manhattan Distance')
 plt.xlabel('Manhattan Scores')
 plt.ylabel('K-Values')
 plt.show()
+
+#################################### K Fold
+
+
+cv = KFold(n_splits=5, random_state=1, shuffle=True)
+# change model to linear regressions
+model = LinearRegression()
+# obtain accuracy scores for the dataset using kfold
+scores = cross_val_score(model, X, y, scoring='neg_mean_absolute_error', cv=cv, n_jobs=-1)
+print('Average Accuracy Score KFold:')
+print(np.mean(np.absolute(scores)))
+print()
+
+
+#################################### SVM 
+
+
+SVM = SVC(kernel='rbf')
+SVM.fit(x_train,y_train)
+predictions = SVM.predict(x_test)
+print('Accuracy Score SVM:')
+print(accuracy_score(y_test, predictions))
+print()
+
