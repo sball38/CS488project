@@ -11,12 +11,10 @@ import pandas as pd
 import numpy as np
 import statistics as stat
 from matplotlib import pyplot as plt
-from sklearn.datasets import make_classification
-from sklearn.model_selection import train_test_split
-from sklearn.model_selection import KFold
-from sklearn.svm import SVC
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import LinearRegression
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+from sklearn.datasets import load_digits
+from sklearn.metrics import classification_report, accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.cluster import KMeans
@@ -31,126 +29,118 @@ from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn import metrics
+from sklearn.datasets import make_classification
+from sklearn.model_selection import KFold
+from sklearn.svm import SVC
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LinearRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
 
 # import csv files
 Maths = pd.read_csv("maths.csv")
-Maths_plot = Maths
 Portuguese = pd.read_csv("Portuguese.csv")
-Portuguese_Plot = Portuguese
-#Portuguese = pd.read_csv('Portuguese_Fake_Data.csv')
-'''
-# append the fake data to the real data
-Real.iloc[1: , :]
-frames = [Real,Fake]
-Portuguese = pd.concat(frames)
-print(Portuguese)
-'''
+
 # settings options to view the entire data set in terminal
 pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
-
 
 ###############   Mean values
 
 # mean values for all entries int Maths based on 'school'
 print('Mean values according to school:')
 print('Math:')
-print(Maths.groupby('school').mean(numeric_only=True))
+print(Maths.groupby('school').mean())
 print()
 print('Portuguese:')
-print(Portuguese.groupby('school').mean(numeric_only=True))
+print(Portuguese.groupby('school').mean())
 print()
 
 # mean values for all entries in Maths based on 'sex'
 print('Mean values according to sex:')
 print('Math:')
-print(Maths.groupby('sex').mean(numeric_only=True))
+print(Maths.groupby('sex').mean())
 print()
 print('Portuguese:')
-print(Portuguese.groupby('sex').mean(numeric_only=True))
+print(Portuguese.groupby('sex').mean())
 print()
 
 # mean values for all entries in Maths based on 'absences'
 print('Mean values according to absences')
 print('Math:')
-print(Maths.groupby('absences').mean(numeric_only=True))
+print(Maths.groupby('absences').mean())
 print()
 print('Portuguese:')
-print(Portuguese.groupby('absences').mean(numeric_only=True))
+print(Portuguese.groupby('absences').mean())
 print()
 
 # mean values for all entries in Maths based on 'failures'
 print('Mean values according to failures')
 print('Math:')
-print(Maths.groupby('failures').mean(numeric_only=True))
+print(Maths.groupby('failures').mean())
 print()
 print('Portuguese:')
-print(Portuguese.groupby('failures').mean(numeric_only=True))
+print(Portuguese.groupby('failures').mean())
 print()
 
 # mean values for all entries in Maths based on 'study time'
 print('Mean values according to study time')
 print('Math:')
-print(Maths.groupby('studytime').mean(numeric_only=True))
+print(Maths.groupby('studytime').mean())
 print()
 print('Portuguese:')
-print(Portuguese.groupby('studytime').mean(numeric_only=True))
+print(Portuguese.groupby('studytime').mean())
 print()
 
 # mean values for all entries in Maths based on 'internet'
 print('Mean values according to internet')
 print('Math:')
-print(Maths.groupby('internet').mean(numeric_only=True))
+print(Maths.groupby('internet').mean())
 print()
 print('Portuguese:')
-print(Portuguese.groupby('internet').mean(numeric_only=True))
+print(Portuguese.groupby('internet').mean())
 print()
 
 # mean values for all entries in Maths based on 'Medu'
 print('Mean values according to Mothers education')
 print('Math:')
-print(Maths.groupby('Medu').mean(numeric_only=True))
+print(Maths.groupby('Medu').mean())
 print()
 print('Portuguese:')
-print(Portuguese.groupby('Medu').mean(numeric_only=True))
+print(Portuguese.groupby('Medu').mean())
 print()
 
 # mean values for all entries in Maths based on 'Fedu'
 print('Mean values according to fathers education')
 print('Math:')
-print(Maths.groupby('Fedu').mean(numeric_only=True))
+print(Maths.groupby('Fedu').mean())
 print()
 print('Portuguese:')
-print(Portuguese.groupby('Fedu').mean(numeric_only=True))
+print(Portuguese.groupby('Fedu').mean())
 print()
 
 # plots to show correlation between differnt term scores and the final grades
-Maths_plot.plot(x = 'G1', y = 'G3', kind = 'scatter', label = 'G1 scores compared to G3 scores')
+Maths.plot(x = 'G1', y = 'G3', kind = 'scatter', label = 'G1 scores compared to G3 scores')
 plt.show()
 
-Maths_plot.plot(x = 'G1', y = 'G2', kind = 'scatter', label = 'G1 scores compared to G2 scores')
+Maths.plot(x = 'G1', y = 'G2', kind = 'scatter', label = 'G1 scores compared to G2 scores')
 plt.show()
 
-Maths_plot.plot(x = 'G2', y = 'G3', kind = 'scatter', label = 'G2 scores compared to G3 scores')
+Maths.plot(x = 'G2', y = 'G3', kind = 'scatter', label = 'G2 scores compared to G3 scores')
 plt.show()
 
+#################################### KNN
 
-############################# Classification Section
-
-############################# K Nearest Neighbor
-
-# create training and testing data
-# this will be commented out after the test and 
-# training data is produced
-y = Maths.iloc[-1]
 cols = [-1]
+
+y = Maths.iloc[-1]
 X = Maths.drop(Maths.columns[cols], axis=1, inplace=True)
 
 X, y = make_classification()
-# Test and train models for Maths
-x_train, x_test, y_train, y_test = train_test_split(X,y, random_state=1, test_size=0.2, shuffle=True)
 
+# create training and test sets for kfold and svm 
+x_train, x_test, y_train, y_test = train_test_split(X,y, random_state=1, test_size=0.2, shuffle=True)
 
 E_scores = []
 M_scores = []
@@ -192,6 +182,7 @@ plt.xlabel('Manhattan Scores')
 plt.ylabel('K-Values')
 plt.show()
 
+
 #################################### K Fold
 
 
@@ -214,7 +205,6 @@ predictions = SVM.predict(x_test)
 print('Accuracy Score SVM:')
 print(accuracy_score(y_test, predictions))
 print()
-
 
 
 print("=================================================")
@@ -254,17 +244,6 @@ plt.scatter(centers[:,0], centers[:,1], marker="x", color='black')
 plt.title("train k-means  for best 5 k clusters and black X are the centroid of clusters")
 
 plt.show()
-
-
-
-
-
-
-
-
-
-
-
 
 
 print("=================================================")
@@ -330,3 +309,4 @@ plt.xticks(n_clusters)
 plt.xlabel("N. of clusters")
 plt.ylabel("Score")
 plt.show()
+
