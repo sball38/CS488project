@@ -16,12 +16,6 @@ from sklearn.decomposition import PCA
 from sklearn.datasets import load_digits
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
-from sklearn.datasets import load_digits
-from sklearn.metrics import classification_report, accuracy_score
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
@@ -29,13 +23,15 @@ from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler, normalize
 from sklearn.metrics import silhouette_samples, silhouette_score
 from sklearn import metrics
-from sklearn.datasets import make_classification
-from sklearn.model_selection import KFold
-from sklearn.svm import SVC
-from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import LinearRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
+
+from six import StringIO
+
+
+from sklearn import tree
+#from sklearn.externals.six import StringIO  
+from IPython.display import Image  
+import pydotplus
+
 
 # import csv files
 Maths = pd.read_csv("maths.csv")
@@ -130,81 +126,11 @@ plt.show()
 Maths.plot(x = 'G2', y = 'G3', kind = 'scatter', label = 'G2 scores compared to G3 scores')
 plt.show()
 
-#################################### KNN
-
-cols = [-1]
-
-y = Maths.iloc[-1]
-X = Maths.drop(Maths.columns[cols], axis=1, inplace=True)
-
-X, y = make_classification()
-
-# create training and test sets for kfold and svm 
-x_train, x_test, y_train, y_test = train_test_split(X,y, random_state=1, test_size=0.2, shuffle=True)
-
-E_scores = []
-M_scores = []
-K_vals = [1,3,5,7,9,11]
-
-# Euclidean Distance KNN
-for i in range(12):
-	if i % 2 == 1:
-		N = KNeighborsClassifier(n_neighbors=i)
-		N.fit(x_train, y_train)
-
-		score = N.score(x_test, y_test)
-		#print(score)
-
-		E_scores.append(score)
-
-# Manhattan Distance KNN
-for i in range(12):
-	if i % 2 == 1:
-		N = KNeighborsClassifier(n_neighbors=i, metric='manhattan')
-		N.fit(x_train, y_train)
-
-		score = N.score(x_test, y_test)
-		#print(score)
-
-		M_scores.append(score)
-
-# plot for knn Euclidean Distance
-plt.plot(E_scores, K_vals)
-plt.title('KNN-Euclidean Distance')
-plt.xlabel('Euclidean Scores')
-plt.ylabel('K-Values')
-plt.show()
-
-# plot for knn Manhattan Distance
-plt.plot(M_scores, K_vals)
-plt.title('KNN-Manhattan Distance')
-plt.xlabel('Manhattan Scores')
-plt.ylabel('K-Values')
-plt.show()
 
 
-#################################### K Fold
 
 
-cv = KFold(n_splits=5, random_state=1, shuffle=True)
-# change model to linear regressions
-model = LinearRegression()
-# obtain accuracy scores for the dataset using kfold
-scores = cross_val_score(model, X, y, scoring='neg_mean_absolute_error', cv=cv, n_jobs=-1)
-print('Average Accuracy Score KFold:')
-print(np.mean(np.absolute(scores)))
-print()
 
-
-#################################### SVM 
-
-
-SVM = SVC(kernel='rbf')
-SVM.fit(x_train,y_train)
-predictions = SVM.predict(x_test)
-print('Accuracy Score SVM:')
-print(accuracy_score(y_test, predictions))
-print()
 
 
 print("=================================================")
@@ -244,6 +170,17 @@ plt.scatter(centers[:,0], centers[:,1], marker="x", color='black')
 plt.title("train k-means  for best 5 k clusters and black X are the centroid of clusters")
 
 plt.show()
+
+
+
+
+
+
+
+
+
+
+
 
 
 print("=================================================")
@@ -308,5 +245,165 @@ plt.title("Silhouette Scores", fontsize=20)
 plt.xticks(n_clusters)
 plt.xlabel("N. of clusters")
 plt.ylabel("Score")
-plt.show()
+#plt.show()
+
+
+data = pd.read_csv('Portuguese.csv')
+data.head()
+data.nunique()
+
+#From the data above, let's create one more column to get the average grade from G1 to G3 (3 years average):
+data['GAvg'] = (data['G1'] + data['G2'] + data['G3']) / 3
+
+
+# Now lets create a grading based on its G Average:
+# Above 90% = Grade A
+# Between 70% & 90% = Grade B
+# Below 70% = Grade C
+def define_grade(df):
+    # Create a list to store the data
+    grades = []
+
+    # For each row in the column,
+    for row in df['GAvg']:
+        # if more than a value,
+        if row >= (0.9 * df['GAvg'].max()):
+            # Append a letter grade
+            grades.append('A')
+        # else, if more than a value,
+        elif row >= (0.7 * df['GAvg'].max()):
+            # Append a letter grade
+            grades.append('B')
+        # else, if more than a value,
+        elif row < (0.7 * df['GAvg'].max()):
+            # Append a letter grade
+            grades.append('C')   
+    # Create a column from the list
+    df['grades'] = grades
+    return df
+
+
+data = define_grade(data)
+
+#we can drop school name and age feature because it is not a computational value
+data.drop(["school","age"], axis=1, inplace=True) 
+
+# Some insights of the stats above:
+# Age: Average Age of the respondent is 16 Years Old
+# traveltime Some kids travel 4 Hours a day just to reach school
+# famrel Average kids have a good relationship with their family
+# absences Average kids only have 6 days absences, and we spot outliers with 75 days absences
+# Dalc Daily alcohol consumption among kids is very low (which is good)
+# Now, we will use DecisionTree Algorithm to predict the result. To be able to work with DecisionTree, The sklearn library requires all computational values to be numerical, so first, we should convert those categorical values to numerical values
+
+# for yes / no values:
+d = {'yes': 1, 'no': 0}
+data['schoolsup'] = data['schoolsup'].map(d)
+data['famsup'] = data['famsup'].map(d)
+data['paid'] = data['paid'].map(d)
+data['activities'] = data['activities'].map(d)
+data['nursery'] = data['nursery'].map(d)
+data['higher'] = data['higher'].map(d)
+data['internet'] = data['internet'].map(d)
+data['romantic'] = data['romantic'].map(d)
+
+#Then for the rest categorical values:
+
+
+# map the sex data
+d = {'F': 1, 'M': 0}
+data['sex'] = data['sex'].map(d)
+
+# map the address data
+d = {'U': 1, 'R': 0}
+data['address'] = data['address'].map(d)
+
+# map the famili size data
+d = {'LE3': 1, 'GT3': 0}
+data['famsize'] = data['famsize'].map(d)
+
+# map the parent's status
+d = {'T': 1, 'A': 0}
+data['Pstatus'] = data['Pstatus'].map(d)
+
+# map the parent's job
+d = {'teacher': 0, 'health': 1, 'services': 2,'at_home': 3,'other': 4}
+data['Mjob'] = data['Mjob'].map(d)
+data['Fjob'] = data['Fjob'].map(d)
+
+# map the reason data
+d = {'home': 0, 'reputation': 1, 'course': 2,'other': 3}
+data['reason'] = data['reason'].map(d)
+
+# map the guardian data
+d = {'mother': 0, 'father': 1, 'other': 2}
+data['guardian'] = data['guardian'].map(d)
+
+# map the grades data
+d = {'C': 0, 'B': 1, 'A': 2}
+data['grades'] = data['grades'].map(d)
+
+
+
+
+#Let's see the unique data again, just to make sure that we have done the mapping successfully.
+data.nunique()
+
+#Now we can collect all predictive feature columns, and then remove grades from it because grades is our target
+student_features = data.columns.tolist()
+student_features.remove('grades') 
+student_features.remove('GAvg') 
+student_features.remove('G1') 
+student_features.remove('G2') 
+student_features.remove('G3') 
+
+#store in a variable
+X = data[student_features].copy()
+y=data[['grades']].copy()
+
+
+#Next we can split the train data and test data using train_test_split function
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=100)
+
+#Then we can create the classifier
+grade_classifier = tree.DecisionTreeClassifier(max_leaf_nodes=len(X.columns), random_state=0)
+grade_classifier.fit(X_train, y_train)
+
+
+
+
+#We can also view how the grade_classifier divide the logic using pydotplus library
+dot_data = StringIO()  
+tree.export_graphviz(grade_classifier, out_file=dot_data, feature_names=student_features)  
+graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
+Image(graph.create_png()) 
+
+
+#let's create our prediction :
+predictions = grade_classifier.predict(X_test)
+#Finally, we can measure the accuracy of our classifier:
+d = accuracy_score(y_true = y_test, y_pred = predictions)
+print(d)
+#Well, accuracy score of 0.775 is not bad, we can also tune the 
+#hyperparameters to increase the accuracy score.
+
+#0.775
+#Well, accuracy score of 0.775 is not bad, we can also tune the 
+#hyperparameters to increase the accuracy score.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
