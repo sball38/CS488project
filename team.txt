@@ -1,0 +1,18 @@
+Team Members:
+
+Shafiq Zaman:
+implement basic analysis
+implement clustering models
+revise report
+create new datasets with fake data for testing
+
+Keller Sedillo:
+Create lists of tasks to complete
+Work on report
+
+Seth Ball:
+Collect Large Data Set
+Analyze Data Set
+Create Github to store program.
+implement basic analysis
+implement classification models
