@@ -179,7 +179,6 @@ plt.plot(E_scores, K_vals)
 plt.title('KNN-Euclidean Distance')
 plt.xlabel('Euclidean Scores')
 plt.ylabel('K-Values')
-Maths.plot(x = 'G1', y = 'G2', kind = 'scatter', label = 'G1 scores compared to G2 scores')
 plt.show()
 
 # plot for knn Manhattan Distance
@@ -187,7 +186,6 @@ plt.plot(M_scores, K_vals)
 plt.title('KNN-Manhattan Distance')
 plt.xlabel('Manhattan Scores')
 plt.ylabel('K-Values')
-Maths.plot(x = 'G2', y = 'G3', kind = 'scatter', label = 'G2 scores compared to G3 scores')
 plt.show()
 
 
