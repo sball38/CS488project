@@ -45,7 +45,7 @@ from sklearn import tree
 from IPython.display import Image  
 import pydotplus
 # import csv files
-Maths = pd.read_csv("maths.csv")
+
 Maths = pd.read_csv("Maths.csv")
 Portuguese = pd.read_csv("Portuguese.csv")
 
