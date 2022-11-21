@@ -4,10 +4,9 @@
 # CS488  
 # CS488 / CS 508  
 # Final Project Basic Analysis
-# 10/13/22
+
 # 11/20/2022
 
-#wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && mkdir ./.conda && bash Miniconda3-latest-Linux-x86_64.sh -b && rm -f Miniconda3-latest-Linux-x86_64.sh 
 
 import os
 import math
