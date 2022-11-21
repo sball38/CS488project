@@ -1,11 +1,10 @@
 # Seth Ball
 # Keller Sedillo
 # Shafiq Zaman
-# CS488  
+# CS488 / CS 508  
 # Final Project Basic Analysis
-# 10/13/22
+# 11/20/2022
 
-#wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && mkdir ./.conda && bash Miniconda3-latest-Linux-x86_64.sh -b && rm -f Miniconda3-latest-Linux-x86_64.sh 
 
 import os
 import math
@@ -46,7 +45,7 @@ from sklearn import tree
 from IPython.display import Image  
 import pydotplus
 # import csv files
-Maths = pd.read_csv("maths.csv")
+Maths = pd.read_csv("Maths.csv")
 Portuguese = pd.read_csv("Portuguese.csv")
 
 # settings options to view the entire data set in terminal
@@ -438,22 +437,3 @@ dot_data = StringIO()
 tree.export_graphviz(grade_classifier, out_file=dot_data, feature_names=student_features, filled =True, class_names=['0', '1','2'])  
 graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
 Image(graph.create_png()) 
-
-
-# import pydotplus 
-# from IPython.display import Image
-
-
-
-
-
-
-# dot_data = tree.export_graphviz(clf, feature_names=X.columns, class_names=['mammals','non-mammals'], filled=True, 
-#                                 out_file=None) 
-# graph = pydotplus.graph_from_dot_data(dot_data) 
-# Image(graph.create_png())
-
-
-
-
-
