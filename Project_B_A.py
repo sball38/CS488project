@@ -44,8 +44,12 @@ from sklearn import tree
 #from sklearn.externals.six import StringIO  
 from IPython.display import Image  
 import pydotplus
-# import csv files
+from timeit import default_timer as timer
+from datetime import timedelta
 
+#start Timer
+start = timer()
+# import csv files
 Maths = pd.read_csv("Maths.csv")
 Portuguese = pd.read_csv("Portuguese.csv")
 
@@ -376,3 +380,7 @@ dot_data = StringIO()
 tree.export_graphviz(grade_classifier, out_file=dot_data, feature_names=student_features, filled =True, class_names=['0', '1','2'])  
 graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
 Image(graph.create_png()) 
+
+#stop Timer
+end = timer()
+print("Elapsed Time "+str(timedelta(seconds=end-start)))
