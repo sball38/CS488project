@@ -375,12 +375,15 @@ print(d)
 #0.775
 #Well, accuracy score of 0.775 is not bad, we can also tune the 
 #hyperparameters to increase the accuracy score.
+
+#stop Timer
+end = timer()
+print("Elapsed Time "+str(timedelta(seconds=end-start)))
+
 #We can also view how the grade_classifier divide the logic using pydotplus library
 dot_data = StringIO()  
 tree.export_graphviz(grade_classifier, out_file=dot_data, feature_names=student_features, filled =True, class_names=['0', '1','2'])  
 graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
 Image(graph.create_png()) 
 
-#stop Timer
-end = timer()
-print("Elapsed Time "+str(timedelta(seconds=end-start)))
+
